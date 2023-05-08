@@ -33,5 +33,21 @@
         };
       }
     );
+    packages = nixpkgs.lib.genAttrs nixpkgs.lib.platforms.unix (system:
+      let pkgs = import nixpkgs { inherit system; }; in {
+        algorithm-cc = pkgs.gccStdenv.mkDerivation {
+          name = "algorithm-cc";
+          src = ./algorithm-cc;
+          nativeBuildInputs = [ pkgs.pkg-config pkgs.cmake ];
+          buildInputs = [ pkgs.openssl ];
+          checkInputs = [ pkgs.gtest ];
+          doCheck = true;
+        };
+        algorithm-python = pkgs.poetry2nix.mkPoetryApplication {
+          projectDir = ./algorithm-python;
+
+        };
+      }
+    );
   };
 }
